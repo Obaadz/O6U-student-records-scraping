@@ -4,10 +4,11 @@ export class O6U {
   static #browser: Browser;
 
   static async initialize() {
-    if (!O6U.#browser) O6U.#browser = await puppeteer.launch({ headless: false });
+    if (!O6U.#browser?.isConnected())
+      O6U.#browser = await puppeteer.launch({ args: ["--no-sandbox"] });
 
     const page = await O6U.#openNewO6UPage();
-
+    console.log("O6u Page Opened successfully");
     return page;
   }
 
@@ -24,6 +25,6 @@ export class O6U {
 
     console.log("PAGES COUNT: ", pages.length);
 
-    if (O6U.#browser) await O6U.#browser.close();
+    if (O6U.#browser.isConnected()) await O6U.#browser.close();
   }
 }
