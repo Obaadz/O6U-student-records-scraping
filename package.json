@@ -17,15 +17,15 @@
   },
   "homepage": "https://github.com/Obaadz/o6u-scraping-server#readme",
   "dependencies": {
-    "@types/express": "^4.17.15",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "mongoose": "^6.8.2",
-    "puppeteer": "^19.4.1"
+    "playwright": "^1.29.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.15",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^18.11.18",
     "nodemon": "^2.0.20",

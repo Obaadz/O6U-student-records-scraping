@@ -1,14 +1,13 @@
-import puppeteer, { Browser, Page } from "puppeteer";
+import { chromium, Browser, Page } from "playwright";
 
 export class O6U {
   static #browser: Browser;
 
   static async initialize() {
-    if (!O6U.#browser?.isConnected())
-      O6U.#browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+    if (!O6U.#browser?.isConnected()) O6U.#browser = await chromium.launch();
 
     const page = await O6U.#openNewO6UPage();
-    console.log("O6u Page Opened successfully");
+    console.log("O6U Page Opened successfully");
     return page;
   }
 
@@ -21,9 +20,7 @@ export class O6U {
   }
 
   static async closeBrowser(): Promise<void> {
-    const pages = await O6U.#browser.pages();
-
-    console.log("PAGES COUNT: ", pages.length);
+    console.log("Browser Closing...");
 
     if (O6U.#browser.isConnected()) await O6U.#browser.close();
   }
