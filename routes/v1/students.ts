@@ -7,9 +7,15 @@ const studentsRoutes = express.Router();
 studentsRoutes.get("/students/records", async (request, response) => {
   const studentAuth: Readonly<StudentAuth> = request.body;
   console.log("STUDENT DATA: ", studentAuth);
-  const page = await O6U.initialize();
 
-  await O6U.closeBrowser();
+  try {
+    const page = await O6U.initialize();
+  
+    await O6U.closeBrowser();
+  } catch (err) {
+    console.log("ERRORR OCCURED...");
+    console.log(err);
+  }
 
   response.end("TEST");
 });
