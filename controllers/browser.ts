@@ -1,10 +1,10 @@
-import { chromium, Browser, Page } from "playwright";
+import { firefox, Browser, Page } from "playwright";
 
 export class O6U {
   static #browser: Browser;
 
   static async initialize() {
-    if (!O6U.#browser?.isConnected()) O6U.#browser = await chromium.launch();
+    if (!O6U.#browser?.isConnected()) O6U.#browser = await firefox.launch();
 
     const page = await O6U.#openNewO6UPage();
     console.log("O6U Page Opened successfully");
