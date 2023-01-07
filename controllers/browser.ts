@@ -3,40 +3,45 @@ import { StudentAuth } from "../types/student";
 
 export class O6U {
   static #browser: Browser;
+  #page: Page;
 
   static async initialize() {
     if (!O6U.#browser?.isConnected())
       O6U.#browser = await puppeteer.launch({ args: ["--no-sandbox"] });
 
     const page = await O6U.#openNewO6UPage();
-    console.log("O6U Page Opened successfully");
-    return page;
+
+    return new O6U(page);
+  }
+
+  constructor(page: Page) {
+    this.#page = page;
+
+    console.log("O6U new instance created successfully...");
   }
 
   static async #openNewO6UPage(): Promise<Page> {
     const page = await O6U.#browser.newPage();
 
     await page.goto("https://o6u.edu.eg/default.aspx?id=70");
+    await page.waitForNetworkIdle({ idleTime: 3000 });
 
     return page;
   }
 
-  static async login(page: Page, studentAuth: StudentAuth): Promise<Page> {
-    await O6U.#typeOnField(page, "#ucHeader_txtUserName", studentAuth.email);
-    await O6U.#typeOnField(page, "#ucHeader_txtPassword", studentAuth.password);
+  async login(studentAuth: StudentAuth) {
+    await this.#typeOnField("#ucHeader_txtUserName", studentAuth.email);
+    await this.#typeOnField("#ucHeader_txtPassword", studentAuth.password);
 
-    await O6U.#clickOnButton(page, "#ucHeader_btnLogin");
-
-    return page;
+    await this.#clickOnButton("#ucHeader_btnLogin");
   }
 
-  static async #typeOnField(page: Page, selector: string, value: string) {
-    await page.$eval(selector, (el, value) => (el.value = value), value);
-
-    return page;
+  async #typeOnField(selector: string, value: string) {
+    await this.#page.$eval(selector, (el, value) => (el.value = value), value);
   }
-  static async #clickOnButton(page: Page, selector: string) {
-    await page.$eval(selector, (el) => el.click());
+
+  async #clickOnButton(selector: string) {
+    await this.#page.$eval(selector, (el) => el.click());
   }
 
   static async closeBrowser(): Promise<void> {
