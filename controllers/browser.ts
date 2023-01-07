@@ -44,11 +44,13 @@ export class O6U {
     await this.#page.$eval(selector, (el) => el.click());
   }
 
-  static async closeBrowser(): Promise<void> {
+  static async getBrowserPagesCount(): Promise<number> {
     const pages = await O6U.#browser.pages();
 
-    console.log("PAGES COUNT: ", pages.length);
+    return pages.length;
+  }
 
+  static async closeBrowser() {
     if (O6U.#browser.isConnected()) await O6U.#browser.close();
   }
 }
