@@ -1,4 +1,5 @@
 import puppeteer, { Browser, Page } from "puppeteer";
+import { StudentAuth } from "../types/student";
 
 export class O6U {
   static #browser: Browser;
@@ -8,7 +9,7 @@ export class O6U {
       O6U.#browser = await puppeteer.launch({ args: ["--no-sandbox"] });
 
     const page = await O6U.#openNewO6UPage();
-    console.log("O6u Page Opened successfully");
+    console.log("O6U Page Opened successfully");
     return page;
   }
 
@@ -18,6 +19,24 @@ export class O6U {
     await page.goto("https://o6u.edu.eg/default.aspx?id=70");
 
     return page;
+  }
+
+  static async login(page: Page, studentAuth: StudentAuth): Promise<Page> {
+    await O6U.#typeOnField(page, "#ucHeader_txtUserName", studentAuth.email);
+    await O6U.#typeOnField(page, "#ucHeader_txtPassword", studentAuth.password);
+
+    await O6U.#clickOnButton(page, "#ucHeader_btnLogin");
+
+    return page;
+  }
+
+  static async #typeOnField(page: Page, selector: string, value: string) {
+    await page.$eval(selector, (el, value) => (el.value = value), value);
+
+    return page;
+  }
+  static async #clickOnButton(page: Page, selector: string) {
+    await page.$eval(selector, (el) => el.click());
   }
 
   static async closeBrowser(): Promise<void> {

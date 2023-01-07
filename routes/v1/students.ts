@@ -10,7 +10,17 @@ studentsRoutes.get("/students/records", async (request, response) => {
 
   try {
     const page = await O6U.initialize();
-  
+
+    await page.waitForNetworkIdle({ idleTime: 3000 });
+
+    await O6U.login(page, studentAuth);
+
+    await page.waitForNetworkIdle({ idleTime: 3000 });
+    
+    const body = await page.$(".Stdname");
+    const studentName = await body?.evaluate((x) => x.textContent);
+
+    console.log(studentName);
     await O6U.closeBrowser();
   } catch (err) {
     console.log("ERRORR OCCURED...");
