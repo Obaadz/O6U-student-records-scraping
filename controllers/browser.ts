@@ -13,7 +13,8 @@ export class O6U {
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
       });
 
-    const page = await O6U.#openNewO6UPage();
+    const page = await O6U.#openNewPage();
+    await page.goto(O6U_WEBSITE);
 
     return new O6U(page);
   }
@@ -24,11 +25,8 @@ export class O6U {
     console.log("O6U new instance created successfully...");
   }
 
-  static async #openNewO6UPage(): Promise<Page> {
+  static async #openNewPage(): Promise<Page> {
     const page = await O6U.#browser.newPage();
-
-    await page.goto(O6U_WEBSITE);
-    await page.waitForNetworkIdle({ idleTime: 3000 });
 
     return page;
   }
