@@ -1,13 +1,17 @@
 import puppeteer, { Browser, Page } from "puppeteer";
 import { StudentAuth } from "../types/student";
 
+const O6U_WEBSITE = "https://o6u.edu.eg/default.aspx?id=70";
+
 export class O6U {
   static #browser: Browser;
   #page: Page;
 
   static async initialize() {
     if (!O6U.#browser?.isConnected())
-      O6U.#browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+      O6U.#browser = await puppeteer.launch({
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      });
 
     const page = await O6U.#openNewO6UPage();
 
@@ -23,7 +27,7 @@ export class O6U {
   static async #openNewO6UPage(): Promise<Page> {
     const page = await O6U.#browser.newPage();
 
-    await page.goto("https://o6u.edu.eg/default.aspx?id=70");
+    await page.goto(O6U_WEBSITE);
     await page.waitForNetworkIdle({ idleTime: 3000 });
 
     return page;
@@ -43,11 +47,14 @@ export class O6U {
   async #clickOnButton(selector: string) {
     await this.#page.$eval(selector, (el) => el.click());
   }
-
   static async getBrowserPagesCount(): Promise<number> {
     const pages = await O6U.#browser.pages();
 
     return pages.length;
+  }
+
+  async closePage() {
+    await this.#page.close();
   }
 
   static async closeBrowser() {
