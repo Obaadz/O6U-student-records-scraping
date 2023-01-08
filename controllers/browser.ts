@@ -8,7 +8,7 @@ export class O6U {
   #page: Page;
 
   static async initialize() {
-    if (!O6U.#browser?.isConnected())
+    if (!O6U.#isBrowserOpen())
       O6U.#browser = await puppeteer.launch({
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
       });
@@ -45,6 +45,7 @@ export class O6U {
   async #clickOnButton(selector: string) {
     await this.#page.$eval(selector, (el) => el.click());
   }
+
   static async getBrowserPagesCount(): Promise<number> {
     const pages = await O6U.#browser.pages();
 
@@ -56,6 +57,10 @@ export class O6U {
   }
 
   static async closeBrowser() {
-    if (O6U.#browser.isConnected()) await O6U.#browser.close();
+    if (O6U.#isBrowserOpen()) await O6U.#browser.close();
+  }
+
+  static #isBrowserOpen() {
+    return O6U.#browser?.isConnected();
   }
 }
