@@ -14,7 +14,11 @@ export class O6U {
       });
 
     const page = await O6U.#openNewPage();
-    await page.goto(O6U_WEBSITE);
+
+    await Promise.all([
+      page.goto(O6U_WEBSITE),
+      page.waitForNetworkIdle({ idleTime: 3000 }),
+    ]);
 
     return new O6U(page);
   }
@@ -32,10 +36,11 @@ export class O6U {
   }
 
   async login(studentAuth: StudentAuth) {
-    await this.#typeOnField("#ucHeader_txtUserName", studentAuth.email);
-    await this.#typeOnField("#ucHeader_txtPassword", studentAuth.password);
-
-    await this.#clickOnButton("#ucHeader_btnLogin");
+    await Promise.all([
+      this.#typeOnField("#ucHeader_txtUserName", studentAuth.email),
+      this.#typeOnField("#ucHeader_txtPassword", studentAuth.password),
+      this.#clickOnButton("#ucHeader_btnLogin"),
+    ]);
   }
 
   async #typeOnField(selector: string, value: string) {
