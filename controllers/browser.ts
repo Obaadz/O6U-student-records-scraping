@@ -8,12 +8,22 @@ export class O6U {
   #page: Page;
 
   static async initialize() {
-    if (!O6U.#isBrowserOpen())
+    let page: Page | null = null;
+
+    if (!O6U.#isBrowserOpen()) {
       O6U.#browser = await puppeteer.launch({
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
       });
 
-    const page = await O6U.#openNewPage();
+      /*
+        Retrieve the first open page in the browser.
+        This is necessary because 'puppeteer.launch()' opens already a new tab when it is called.
+        So instead of creating a new tab below, we can use the already-open tab.
+      */
+      page = (await O6U.#browser.pages())[0];
+    }
+
+    if (!page) page = await O6U.#openNewPage();
 
     await Promise.all([
       page.goto(O6U_WEBSITE),
