@@ -1,5 +1,6 @@
 import express from "express";
 import { O6U } from "../../controllers/browser";
+import { Student } from "../../controllers/student";
 import { StudentAuth } from "../../types/student";
 
 const studentsRoutes = express.Router();
@@ -9,11 +10,10 @@ studentsRoutes.get("/students/records", async (request, response) => {
   console.log("STUDENT DATA: ", studentAuth);
 
   try {
-    const O6UPage = await O6U.initialize();
+    const student = await Student.initialize(studentAuth);
 
-    // await O6UPage.login(studentAuth);
+    console.log("Student name is " + student.name);
 
-    await O6UPage.closePage();
     response.end("OK");
   } catch (err) {
     console.log("ERROR OCCURED...");
