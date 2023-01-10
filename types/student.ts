@@ -1,10 +1,13 @@
 import { Record } from "./record";
 
-export type Student = {
+type Student = {
+  name: string;
   email: string;
   password: string;
   id: string;
   records: Record[];
 };
 
-export type StudentAuth = Omit<Student, "id" | "records">;
+export interface IStudent extends Omit<Student, "email" | "password"> {}
+
+export type StudentAuth = Pick<Student, "email" | "password">;
