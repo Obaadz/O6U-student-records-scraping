@@ -50,6 +50,7 @@ export class O6U {
       this.#typeOnField("#ucHeader_txtUserName", studentAuth.email),
       this.#typeOnField("#ucHeader_txtPassword", studentAuth.password),
       this.#clickOnButton("#ucHeader_btnLogin"),
+      this.#page.waitForNetworkIdle({ idleTime: 3000 }),
     ]);
   }
 
@@ -59,6 +60,16 @@ export class O6U {
 
   async #clickOnButton(selector: string) {
     await this.#page.$eval(selector, (el) => el.click());
+  }
+
+  async getStudentName(): Promise<string> {
+    try {
+      const studentName = await this.#page.$eval(".Stdname", (el) => el.innerText);
+
+      return studentName;
+    } catch (err) {
+      throw new Error("Student is not logged in");
+    }
   }
 
   static async getBrowserPagesCount(): Promise<number> {
