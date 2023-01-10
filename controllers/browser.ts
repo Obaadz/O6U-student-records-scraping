@@ -46,12 +46,25 @@ export class O6U {
   }
 
   async login(studentAuth: StudentAuth) {
-    await Promise.all([
-      this.#typeOnField("#ucHeader_txtUserName", studentAuth.email),
-      this.#typeOnField("#ucHeader_txtPassword", studentAuth.password),
-      this.#clickOnButton("#ucHeader_btnLogin"),
-      this.#page.waitForNetworkIdle({ idleTime: 3000 }),
-    ]);
+    const MAX_RETRIES = 1;
+    let retries = 0;
+
+    while (retries <= MAX_RETRIES) {
+      try {
+        await Promise.all([
+          this.#typeOnField("#ucHeader_txtUserName", studentAuth.email),
+          this.#typeOnField("#ucHeader_txtPassword", studentAuth.password),
+          this.#clickOnButton("#ucHeader_btnLogin"),
+          this.#page.waitForNetworkIdle({ idleTime: 3000 }),
+        ]);
+
+        return;
+      } catch (err) {
+        retries++;
+
+        if (retries > MAX_RETRIES) throw new Error("Server error on login");
+      }
+    }
   }
 
   async #typeOnField(selector: string, value: string) {
