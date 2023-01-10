@@ -75,6 +75,12 @@ export class O6U {
     await this.#page.$eval(selector, (el) => el.click());
   }
 
+  async #isLoggedIn() {
+    const isLoggedIn = (await this.#page.$(".StudentInfo")) ? true : false;
+
+    return isLoggedIn;
+  }
+
   async getStudentName(): Promise<string> {
     try {
       const studentName = await this.#page.$eval(".Stdname", (el) => el.innerText);
