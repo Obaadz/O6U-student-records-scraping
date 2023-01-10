@@ -1,4 +1,5 @@
 import puppeteer, { Browser, Page } from "puppeteer";
+import { ERROR_MESSAGES } from "../types/Enums";
 import { StudentAuth } from "../types/student";
 
 const O6U_WEBSITE = "https://o6u.edu.eg/default.aspx?id=70";
@@ -58,13 +59,16 @@ export class O6U {
           this.#page.waitForNetworkIdle({ idleTime: 3000 }),
         ]);
 
-        return;
+        break;
       } catch (err) {
         retries++;
 
-        if (retries > MAX_RETRIES) throw new Error("Server error on login");
+        if (retries > MAX_RETRIES) throw new Error(ERROR_MESSAGES.SERVER_ERROR);
       }
     }
+
+    if (!(await this.#isLoggedIn()))
+      throw new Error(ERROR_MESSAGES.INCORRECT_EMAIL_OR_PASSWORD);
   }
 
   async #typeOnField(selector: string, value: string) {
@@ -87,7 +91,7 @@ export class O6U {
 
       return studentName;
     } catch (err) {
-      throw new Error("Student is not logged in");
+      throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
     }
   }
 
