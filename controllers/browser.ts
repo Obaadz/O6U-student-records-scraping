@@ -5,14 +5,14 @@ import { StudentAuth } from "../types/student";
 const O6U_WEBSITE = "https://o6u.edu.eg/default.aspx?id=70";
 
 export class O6U {
-  static #browser: Browser;
-  #page: Page;
+  private static browser: Browser;
+  private page: Page;
 
   static async initialize() {
     let page: Page | null = null;
 
-    if (!O6U.#isBrowserOpen()) {
-      O6U.#browser = await puppeteer.launch({
+    if (!O6U.isBrowserOpen()) {
+      O6U.browser = await puppeteer.launch({
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
       });
 
@@ -21,10 +21,10 @@ export class O6U {
         This is necessary because 'puppeteer.launch()' opens already a new tab when it is called.
         So instead of creating a new tab below, we can use the already-open tab.
       */
-      page = (await O6U.#browser.pages())[0];
+      page = (await O6U.browser.pages())[0];
     }
 
-    if (!page) page = await O6U.#openNewPage();
+    if (!page) page = await O6U.openNewPage();
 
     await Promise.all([
       page.goto(O6U_WEBSITE),
@@ -35,13 +35,13 @@ export class O6U {
   }
 
   constructor(page: Page) {
-    this.#page = page;
+    this.page = page;
 
     console.log("O6U new instance created successfully...");
   }
 
-  static async #openNewPage(): Promise<Page> {
-    const page = await O6U.#browser.newPage();
+  private static async openNewPage(): Promise<Page> {
+    const page = await O6U.browser.newPage();
 
     return page;
   }
@@ -53,10 +53,10 @@ export class O6U {
     while (retries <= MAX_RETRIES) {
       try {
         await Promise.all([
-          this.#typeOnField("#ucHeader_txtUserName", studentAuth.email),
-          this.#typeOnField("#ucHeader_txtPassword", studentAuth.password),
-          this.#clickOnButton("#ucHeader_btnLogin"),
-          this.#page.waitForNetworkIdle({ idleTime: 3000 }),
+          this.typeOnField("#ucHeader_txtUserName", studentAuth.email),
+          this.typeOnField("#ucHeader_txtPassword", studentAuth.password),
+          this.clickOnButton("#ucHeader_btnLogin"),
+          this.page.waitForNetworkIdle({ idleTime: 3000 }),
         ]);
 
         break;
@@ -67,27 +67,27 @@ export class O6U {
       }
     }
 
-    if (!(await this.#isLoggedIn()))
+    if (!(await this.isLoggedIn()))
       throw new Error(ERROR_MESSAGES.INCORRECT_EMAIL_OR_PASSWORD);
   }
 
-  async #typeOnField(selector: string, value: string) {
-    await this.#page.$eval(selector, (el, value) => (el.value = value), value);
+  private async typeOnField(selector: string, value: string) {
+    await this.page.$eval(selector, (el, value) => (el.value = value), value);
   }
 
-  async #clickOnButton(selector: string) {
-    await this.#page.$eval(selector, (el) => el.click());
+  private async clickOnButton(selector: string) {
+    await this.page.$eval(selector, (el) => el.click());
   }
 
-  async #isLoggedIn() {
-    const isLoggedIn = (await this.#page.$(".StudentInfo")) ? true : false;
+  private async isLoggedIn() {
+    const isLoggedIn = (await this.page.$(".StudentInfo")) ? true : false;
 
     return isLoggedIn;
   }
 
   async getStudentName(): Promise<string> {
     try {
-      const studentName = await this.#page.$eval(".Stdname", (el) => el.innerText);
+      const studentName = await this.page.$eval(".Stdname", (el) => el.innerText);
 
       return studentName;
     } catch (err) {
@@ -96,20 +96,20 @@ export class O6U {
   }
 
   static async getBrowserPagesCount(): Promise<number> {
-    const pages = await O6U.#browser.pages();
+    const pages = await O6U.browser.pages();
 
     return pages.length;
   }
 
   async closePage() {
-    await this.#page.close();
+    await this.page.close();
   }
 
   static async closeBrowser() {
-    if (O6U.#isBrowserOpen()) await O6U.#browser.close();
+    if (O6U.isBrowserOpen()) await O6U.browser.close();
   }
 
-  static #isBrowserOpen() {
-    return O6U.#browser?.isConnected();
+  private static isBrowserOpen() {
+    return O6U.browser?.isConnected();
   }
 }
