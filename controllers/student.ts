@@ -9,9 +9,9 @@ type StudentData = {
 };
 
 export class Student implements IStudent {
-  name: string;
-  id: string;
-  records: Record[];
+  readonly name: string;
+  readonly id: string;
+  readonly records: Record[];
 
   static async initialize(studentAuth: StudentAuth) {
     const O6UPage = await O6U.initialize();
@@ -25,6 +25,7 @@ export class Student implements IStudent {
     };
 
     await O6UPage.closePage();
+
     return new Student(student);
   }
 
