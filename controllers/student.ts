@@ -16,7 +16,7 @@ export class Student implements IStudent {
   static async initialize(studentAuth: StudentAuth) {
     const O6UPage = await O6U.initialize();
 
-    await O6UPage.login(studentAuth);
+    await (await O6UPage.login(studentAuth)).goToRecordsPage();
 
     const student = {
       name: await O6UPage.getStudentName(),

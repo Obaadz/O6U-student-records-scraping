@@ -92,20 +92,18 @@ export class O6U {
     this.currentPageName = PAGES_NAMES.RECORDS;
   }
 
-  private async isLoggedIn() {
-    const isLoggedIn = (await this.page.$(".StudentInfo")) ? true : false;
-
-    return isLoggedIn;
-  }
-
   async getStudentName(): Promise<string> {
-    try {
-      const studentName = await this.page.$eval(".Stdname", (el) => el.innerText);
+    if (!(await this.isLoggedIn())) throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
 
-      return studentName;
-    } catch (err) {
-      throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
-    }
+    const getNameFromPage: { [key in PAGES_NAMES]: () => Promise<string> } = {
+      [PAGES_NAMES.HOME]: async () =>
+        await this.page.$eval(".Stdname", (el) => el.innerText),
+      [PAGES_NAMES.RECORDS]: async () =>
+        await this.page.$eval("#lblStdName1", (el) => el.innerText),
+    };
+    const studentName: string = await getNameFromPage[this.currentPageName]();
+
+    return studentName;
   }
 
   static async getBrowserPagesCount(): Promise<number> {
@@ -124,5 +122,11 @@ export class O6U {
 
   private static isBrowserOpen() {
     return O6U.browser?.isConnected();
+  }
+
+  private async isLoggedIn() {
+    const isLoggedIn = (await this.page.$(".StudentInfo")) ? true : false;
+
+    return isLoggedIn;
   }
 }
