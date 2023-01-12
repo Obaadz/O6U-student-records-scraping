@@ -1,5 +1,5 @@
 import puppeteer, { Browser, Page } from "puppeteer";
-import { ERROR_MESSAGES, PAGES_NAMES } from "../types/Enums";
+import { ERROR_MESSAGES, PAGES_NAMES } from "../types/enums";
 import { StudentAuth } from "../types/student";
 
 export class O6U {
