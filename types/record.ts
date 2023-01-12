@@ -1,4 +1,8 @@
+import { Course } from "./course";
+
 export type Record = {
-  Semester: String;
-  GPA: Number;
+  name: string;
+  hours: number;
+  GPA: number;
+  courses: [Course];
 };
