@@ -3,3 +3,8 @@ export enum ERROR_MESSAGES {
   NOT_LOGGED_IN = "NOT_LOGGED_IN",
   SERVER_ERROR = "SERVER_ERROR",
 }
+
+export enum PAGES_NAMES {
+  HOME = "HOME_PAGE",
+  RECORDS = "RECORDS_PAGE",
+}

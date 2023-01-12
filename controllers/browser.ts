@@ -1,5 +1,5 @@
 import puppeteer, { Browser, Page } from "puppeteer";
-import { ERROR_MESSAGES } from "../types/Enums";
+import { ERROR_MESSAGES, PAGES_NAMES } from "../types/Enums";
 import { StudentAuth } from "../types/student";
 
 export class O6U {
@@ -7,6 +7,7 @@ export class O6U {
   static readonly RECORDS_PAGE = "https://o6u.edu.eg/historicalresults.aspx";
   private static browser: Browser;
   private page: Page;
+  private currentPageName: PAGES_NAMES;
 
   static async initialize() {
     let page: Page | null = null;
@@ -31,11 +32,12 @@ export class O6U {
       page.waitForNetworkIdle({ idleTime: 3000 }),
     ]);
 
-    return new O6U(page);
+    return new O6U(page, PAGES_NAMES.HOME);
   }
 
-  constructor(page: Page) {
+  constructor(page: Page, currentPageName: PAGES_NAMES) {
     this.page = page;
+    this.currentPageName = currentPageName;
 
     console.log("O6U new instance created successfully...");
   }
@@ -86,6 +88,8 @@ export class O6U {
       this.page.goto(O6U.RECORDS_PAGE),
       this.page.waitForNetworkIdle({ idleTime: 3000 }),
     ]);
+
+    this.currentPageName = PAGES_NAMES.RECORDS;
   }
 
   private async isLoggedIn() {
