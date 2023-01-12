@@ -2,9 +2,9 @@ import puppeteer, { Browser, Page } from "puppeteer";
 import { ERROR_MESSAGES } from "../types/Enums";
 import { StudentAuth } from "../types/student";
 
-const O6U_WEBSITE = "https://o6u.edu.eg/default.aspx?id=70";
-
 export class O6U {
+  static readonly HOME_PAGE = "https://o6u.edu.eg/default.aspx?id=70";
+  static readonly RECORDS_PAGE = "https://o6u.edu.eg/historicalresults.aspx";
   private static browser: Browser;
   private page: Page;
 
@@ -27,7 +27,7 @@ export class O6U {
     if (!page) page = await O6U.openNewPage();
 
     await Promise.all([
-      page.goto(O6U_WEBSITE),
+      page.goto(O6U.HOME_PAGE),
       page.waitForNetworkIdle({ idleTime: 3000 }),
     ]);
 
@@ -69,6 +69,8 @@ export class O6U {
 
     if (!(await this.isLoggedIn()))
       throw new Error(ERROR_MESSAGES.INCORRECT_EMAIL_OR_PASSWORD);
+
+    return this;
   }
 
   private async typeOnField(selector: string, value: string) {
@@ -77,6 +79,13 @@ export class O6U {
 
   private async clickOnButton(selector: string) {
     await this.page.$eval(selector, (el) => el.click());
+  }
+
+  async goToRecordsPage() {
+    await Promise.all([
+      this.page.goto(O6U.RECORDS_PAGE),
+      this.page.waitForNetworkIdle({ idleTime: 3000 }),
+    ]);
   }
 
   private async isLoggedIn() {
