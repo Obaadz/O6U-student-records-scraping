@@ -12,7 +12,8 @@ studentsRoutes.get("/students/records", async (request, response) => {
   try {
     const student = await Student.initialize(studentAuth);
 
-    console.log("Student name is " + student.name);
+    console.log("STUDENT DATA: ");
+    console.log(student);
 
     response.end("OK");
   } catch (err) {

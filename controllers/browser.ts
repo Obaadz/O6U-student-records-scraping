@@ -29,7 +29,7 @@ export class O6U {
 
     await Promise.all([
       page.goto(O6U.HOME_PAGE),
-      page.waitForNetworkIdle({ idleTime: 3000 }),
+      page.waitForNetworkIdle({ idleTime: 1500 }),
     ]);
 
     return new O6U(page, PAGES_NAMES.HOME);
@@ -58,7 +58,7 @@ export class O6U {
           this.typeOnField("#ucHeader_txtUserName", studentAuth.email),
           this.typeOnField("#ucHeader_txtPassword", studentAuth.password),
           this.clickOnButton("#ucHeader_btnLogin"),
-          this.page.waitForNetworkIdle({ idleTime: 3000 }),
+          this.page.waitForNetworkIdle({ idleTime: 1500 }),
         ]);
 
         break;
@@ -86,7 +86,7 @@ export class O6U {
   async goToRecordsPage() {
     await Promise.all([
       this.page.goto(O6U.RECORDS_PAGE),
-      this.page.waitForNetworkIdle({ idleTime: 3000 }),
+      this.page.waitForNetworkIdle({ idleTime: 1500 }),
     ]);
 
     this.currentPageName = PAGES_NAMES.RECORDS;
@@ -104,6 +104,79 @@ export class O6U {
     const studentName: string = await getNameFromPage[this.currentPageName]();
 
     return studentName;
+  }
+
+  async getStudentId(): Promise<string> {
+    if (!(await this.isLoggedIn())) throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
+    else if (this.currentPageName !== PAGES_NAMES.RECORDS)
+      throw new Error(ERROR_MESSAGES.NOT_IN_RECORDS_PAGE);
+
+    const studentId = await this.page.$eval("#lblStdCode", (el) => el.innerText);
+
+    return studentId;
+  }
+
+  async getStudentNationality(): Promise<string> {
+    if (!(await this.isLoggedIn())) throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
+    else if (this.currentPageName !== PAGES_NAMES.RECORDS)
+      throw new Error(ERROR_MESSAGES.NOT_IN_RECORDS_PAGE);
+
+    const studentNationality = await this.page.$eval(
+      "#lblNationality",
+      (el) => el.innerText
+    );
+
+    return studentNationality;
+  }
+
+  async getStudentCGPA(): Promise<number> {
+    if (!(await this.isLoggedIn())) throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
+    else if (this.currentPageName !== PAGES_NAMES.RECORDS)
+      throw new Error(ERROR_MESSAGES.NOT_IN_RECORDS_PAGE);
+
+    const studentCGPA: string = await this.page.evaluate(() => {
+      const CGPA: string = $('span:contains("CGPA") + span')[0].innerText;
+
+      return CGPA;
+    });
+
+    return Number(studentCGPA);
+  }
+
+  async getStudentTotalHours(): Promise<number> {
+    if (!(await this.isLoggedIn())) throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
+    else if (this.currentPageName !== PAGES_NAMES.RECORDS)
+      throw new Error(ERROR_MESSAGES.NOT_IN_RECORDS_PAGE);
+
+    const studentTotalHours: string = await this.page.evaluate(() => {
+      const totalHours: string = $(
+        'span:contains("Total Registered Hours - Total Price:") + span'
+      )[0].innerText;
+
+      return totalHours;
+    });
+
+    return Number(studentTotalHours);
+  }
+
+  async getStudentLevel(): Promise<string> {
+    if (!(await this.isLoggedIn())) throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
+    else if (this.currentPageName !== PAGES_NAMES.RECORDS)
+      throw new Error(ERROR_MESSAGES.NOT_IN_RECORDS_PAGE);
+
+    const studentLevel = await this.page.$eval("#lblStdLevel", (el) => el.innerText);
+
+    return studentLevel;
+  }
+
+  async getStudentSection(): Promise<string> {
+    if (!(await this.isLoggedIn())) throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
+    else if (this.currentPageName !== PAGES_NAMES.RECORDS)
+      throw new Error(ERROR_MESSAGES.NOT_IN_RECORDS_PAGE);
+
+    const studentSection = await this.page.$eval("#lblStdSection", (el) => el.innerText);
+
+    return studentSection;
   }
 
   static async getBrowserPagesCount(): Promise<number> {

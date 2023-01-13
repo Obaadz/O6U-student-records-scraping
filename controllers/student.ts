@@ -6,12 +6,22 @@ type StudentData = {
   name: string;
   id: string;
   records: Record[];
+  nationality: string;
+  CGPA: number;
+  totalHours: number;
+  level: string;
+  section: string;
 };
 
 export class Student implements IStudent {
   readonly name: string;
   readonly id: string;
   readonly records: Record[];
+  readonly nationality: string;
+  readonly CGPA: number;
+  readonly totalHours: number;
+  readonly level: string;
+  readonly section: string;
 
   static async initialize(studentAuth: StudentAuth) {
     const O6UPage = await O6U.initialize();
@@ -20,8 +30,13 @@ export class Student implements IStudent {
 
     const student = {
       name: await O6UPage.getStudentName(),
-      id: "202011111",
+      id: await O6UPage.getStudentId(),
       records: [],
+      nationality: await O6UPage.getStudentNationality(),
+      CGPA: await O6UPage.getStudentCGPA(),
+      totalHours: await O6UPage.getStudentTotalHours(),
+      level: await O6UPage.getStudentLevel(),
+      section: await O6UPage.getStudentSection(),
     };
 
     await O6UPage.closePage();
@@ -30,8 +45,13 @@ export class Student implements IStudent {
   }
 
   constructor(student: StudentData) {
+    this.name = student.name;
     this.id = student.id;
     this.records = student.records;
-    this.name = student.name;
+    this.nationality = student.nationality;
+    this.CGPA = student.CGPA;
+    this.totalHours = student.totalHours;
+    this.level = student.level;
+    this.section = student.section;
   }
 }
