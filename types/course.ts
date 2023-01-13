@@ -3,5 +3,4 @@ export type Course = {
   code: string;
   grade: string;
   hours: number;
-  points: number;
 };
