@@ -2,6 +2,8 @@ import puppeteer, { Browser, Page } from "puppeteer";
 import { ERROR_MESSAGES, PAGES_NAMES } from "../types/enums";
 import { StudentAuth } from "../types/student";
 
+const TIMEOUT = 60000;
+
 export class O6U {
   static readonly HOME_PAGE = "https://o6u.edu.eg/default.aspx?id=70";
   static readonly RECORDS_PAGE = "https://o6u.edu.eg/historicalresults.aspx";
@@ -15,6 +17,7 @@ export class O6U {
     if (!O6U.isBrowserOpen()) {
       O6U.browser = await puppeteer.launch({
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
+        timeout: TIMEOUT,
       });
 
       /*
