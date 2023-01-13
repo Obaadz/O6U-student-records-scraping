@@ -6,6 +6,11 @@ type Student = {
   password: string;
   id: string;
   records: Record[];
+  nationality: string;
+  CGPA: number;
+  totalHours: number;
+  level: string;
+  section: string;
 };
 
 export interface IStudent extends Omit<Student, "email" | "password"> {}
