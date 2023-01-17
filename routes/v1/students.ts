@@ -15,12 +15,12 @@ studentsRoutes.get("/students/records", async (request, response) => {
     console.log("STUDENT DATA: ");
     console.log(student);
 
-    response.end("OK");
-  } catch (err) {
+    response.send({ isSuccess: true, student });
+  } catch (err: any) {
     console.log("ERROR OCCURED...");
     console.log(err);
 
-    response.end("ERROR OCCURED");
+    response.send({ isSuccess: false, message: err.message });
   } finally {
     const openedPagesCount = await O6U.getBrowserPagesCount();
 
