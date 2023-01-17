@@ -5,7 +5,7 @@ import { StudentAuth } from "../../types/student";
 
 const studentsRoutes = express.Router();
 
-studentsRoutes.get("/students/records", async (request, response) => {
+studentsRoutes.get("/students", async (request, response) => {
   const studentAuth: Readonly<StudentAuth> = request.body;
   console.log("STUDENT DATA: ", studentAuth);
 
