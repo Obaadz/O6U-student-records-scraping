@@ -28,10 +28,10 @@ export class Student implements IStudent {
 
     await (await O6UPage.login(studentAuth)).goToRecordsPage();
 
-    const student = {
+    const student: StudentData = {
       name: await O6UPage.getStudentName(),
       id: await O6UPage.getStudentId(),
-      records: [],
+      records: [await O6UPage.getLastStudentRecord()],
       nationality: await O6UPage.getStudentNationality(),
       CGPA: await O6UPage.getStudentCGPA(),
       totalHours: await O6UPage.getStudentTotalHours(),

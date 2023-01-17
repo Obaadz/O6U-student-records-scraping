@@ -1,5 +1,7 @@
 import puppeteer, { Browser, Page } from "puppeteer";
+import { Course } from "../types/course";
 import { ERROR_MESSAGES, PAGES_NAMES } from "../types/enums";
+import { Record } from "../types/record";
 import { StudentAuth } from "../types/student";
 
 const TIMEOUT = 60000;
@@ -180,6 +182,48 @@ export class O6U {
     const studentSection = await this.page.$eval("#lblStdSection", (el) => el.innerText);
 
     return studentSection;
+  }
+
+  async getLastStudentRecord() {
+    if (!(await this.isLoggedIn())) throw new Error(ERROR_MESSAGES.NOT_LOGGED_IN);
+    else if (this.currentPageName !== PAGES_NAMES.RECORDS)
+      throw new Error(ERROR_MESSAGES.NOT_IN_RECORDS_PAGE);
+
+    const studentRecord: Record = await this.page.evaluate(() => {
+      const courses = $('span:contains("Total Points")')
+        .parent()
+        .prev()
+        .find("table tbody tr")
+        .slice(1)
+        .map(function () {
+          const course: Course = {
+            name: $(this).find(".textaligntd").text(),
+            code: $(this).find("td:nth-child(2)").text(),
+            grade: $(this).find("td:nth-child(7)").text(),
+            hours: Number($(this).find("td:nth-child(8)").text()),
+          };
+          return course;
+        })
+        .get();
+
+      const recordInformationArray = $('span:contains("Total Points")')
+        .parent()
+        .prevAll()
+        .slice(1, 5)
+        .get()
+        .reverse();
+
+      const recordInformation = {
+        name: recordInformationArray[0].lastChild.innerText,
+        hours: Number(recordInformationArray[1].lastChild.innerText),
+        GPA: Number(recordInformationArray[3].lastChild.innerText),
+        courses,
+      };
+
+      return recordInformation;
+    });
+
+    return studentRecord;
   }
 
   static async getBrowserPagesCount(): Promise<number> {
